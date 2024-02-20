@@ -34,8 +34,8 @@ class DebugDrawer(chrono.VisualizationCallback):
 
     def DrawLine(self, pA, pB, color):
         pass
-        # print("   pA = ", pA.x, pA.y, pA.z)
-        # print("   pB = ", pB.x, pB.y, pB.z)
+        print("   pA = ", pA.x, pA.y, pA.z)
+        print("   pB = ", pB.x, pB.y, pB.z)
 
 # -----------------------------------------------------------------------------
 
