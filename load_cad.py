@@ -17,16 +17,14 @@ system.Add(ground)
 # Load cad model top.stl
 my_doc = cascade.ChCascadeDoc()
 
-# load_ok = my_doc.Load_STEP('C:/Users/tenant/PycharmProjects/chrono-sim/Part1.step')
-load_ok = my_doc.Load_STEP(cno.GetChronoDataFile('cascade/assembly.stp'))
+load_ok = my_doc.Load_STEP('Part1.step')
 # cno.ChCollisionModel.SetDefaultSuggestedEnvelope(0.002)
 # cno.ChCollisionModel.SetDefaultSuggestedMargin(0.001)
 
 body_1 = cno.ChBody()
 if load_ok:
     shape_1 = TopoDS_Shape()
-    # part_name = "65d4bcf3b21ea63a4383f41e"
-    part_name = "Assem1/body1"
+    part_name = "Part 1"
     if my_doc.GetNamedShape(shape_1, part_name):  # Assem1/body1 is the name of the shape in the STEP file
         mbody_1 = cascade.ChCascadeBodyEasy(shape_1, 1000, True, True, coll_mat)
 
