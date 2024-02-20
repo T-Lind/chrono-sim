@@ -63,6 +63,8 @@ coll_mat = chrono.ChMaterialSurfaceNSC()
 system.AddBody(setup_ground(3, 3))
 
 system.AddBody(load_step_body('MotorAssembly.step', 'Assembly/Body'))
+system.AddBody(load_step_body('MotorAssembly.step', 'Assembly/Motor', pos=chrono.ChVectorD(1, 0, 0)))
+system.AddBody(load_step_body('MotorAssembly.step', 'Assembly/Shaft', pos=chrono.ChVectorD(0, 0, 1)))
 
 # Create the Irrlicht visualization
 vis = chronoirr.ChVisualSystemIrrlicht()
