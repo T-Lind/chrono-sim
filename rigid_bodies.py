@@ -30,7 +30,7 @@ sphere_body = chrono.ChBodyEasySphere(
 )
 sphere_body.SetMass(10)
 sphere_body.SetPos(chrono.ChVectorD(0, 0, 0))
-sphere_body.SetPos_dt(chrono.ChVectorD(4, 10, 0))  # This gives the ball an initial upward velocity of 10 and moves towards the cylinder to knock it over
+sphere_body.SetPos_dt(chrono.ChVectorD(4, 10, 0.05))  # This gives the ball an initial upward velocity of 10 and moves towards the cylinder to knock it over
 my_system.AddBody(sphere_body)
 
 
