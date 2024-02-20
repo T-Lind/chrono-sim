@@ -46,7 +46,9 @@ cylindrical_body = chrono.ChBodyEasyCylinder(
 cylindrical_body.SetMass(0)
 cylindrical_body.SetPos(chrono.ChVectorD(3, 3, 0))
 cylindrical_body.SetPos_dt(chrono.ChVectorD(1, 1, 0))
-cylindrical_body.SetRot_dt(chrono.Q_from_AngAxis(chrono.CH_C_PI / 4, chrono.ChVectorD(1, 1, 0)))
+
+# Set acceleration along the axis of the cylinder
+cylindrical_body.SetRot_dt(chrono.Q_from_AngAxis(chrono.CH_C_PI / 4, chrono.ChVectorD(1, 0, 0)))
 my_system.AddBody(cylindrical_body)
 
 # Create the Irrlicht visualization
