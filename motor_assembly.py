@@ -14,14 +14,15 @@ def setup_ground(x: float, y: float, coll_mat=None, pos=None):
         True,  # Collision
         coll_mat
     )
+    ground.GetVisualShape(0).SetTexture(chrono.GetChronoDataFile("textures/concrete.jpg"))
     ground.SetBodyFixed(True)
     if not pos:
-        pos = chrono.ChVectorD(0, -1, 0)
+        pos = chrono.ChVectorD(0, 0, 0)
     ground.SetPos(pos)
     return ground
 
 
-def load_step_body(file_name: str, part_name: str, mass=3, pos: chrono.ChVectorD = None):
+def load_step_body(file_name: str, part_name: str, mass: float=3, pos: chrono.ChVectorD = None, texture=None):
     my_doc = cascade.ChCascadeDoc()
     load_ok = my_doc.Load_STEP(file_name)
 
@@ -45,6 +46,9 @@ def load_step_body(file_name: str, part_name: str, mass=3, pos: chrono.ChVectorD
             if pos:
                 mbody.SetPos(pos)
 
+            if texture:
+                mbody.GetVisualShape(0).SetTexture(texture)
+
             return mbody
 
         else:
@@ -63,8 +67,10 @@ coll_mat = chrono.ChMaterialSurfaceNSC()
 system.AddBody(setup_ground(3, 3))
 
 body = load_step_body('MotorAssembly.step', 'Assembly/Body')
-motor = load_step_body('MotorAssembly.step', 'Assembly/Motor')
-shaft = load_step_body('MotorAssembly.step', 'Assembly/Shaft')
+
+# Note: list of default textures can be found here: https://github.com/projectchrono/chrono/tree/main/data/textures
+motor = load_step_body('MotorAssembly.step', 'Assembly/Motor', texture=chrono.GetChronoDataFile("textures/blue.png"))
+shaft = load_step_body('MotorAssembly.step', 'Assembly/Shaft', mass=3, texture=chrono.GetChronoDataFile("textures/bluewhite.png"))
 
 
 body_motor_fixed = chrono.ChLinkLockLock()
@@ -75,8 +81,8 @@ motor_shaft_revolute.Initialize(motor, shaft, chrono.ChCoordsysD(chrono.ChVector
 
 
 actuator = chrono.ChLinkMotorRotationTorque()
-actuator.Initialize(shaft, motor, chrono.ChFrameD(chrono.ChVectorD(0, 0, 1)))
-actuator.SetTorqueFunction(chrono.ChFunction_Const(1))
+actuator.Initialize(shaft, motor, chrono.ChFrameD(chrono.ChVectorD(0, 0, 1), chrono.Q_from_AngAxis(chrono.CH_C_PI / 2, chrono.ChVectorD(0, 1, 0))), )
+actuator.SetTorqueFunction(chrono.ChFunction_Const(-100))
 
 system.AddBody(body)
 system.AddBody(motor)
@@ -110,5 +116,5 @@ while vis.Run():
     system.GetCollisionSystem().Visualize(chrono.ChCollisionSystem.VIS_Shapes)
 
     if system.GetChTime() - last_tenth_sec_passed > 0.1:
-        print(f"Time is {system.GetChTime():.1f}")
+        print(f"Time is {system.GetChTime():.1f}, Motor angle is {motor.GetRot()} degrees.")
         last_tenth_sec_passed = system.GetChTime()
