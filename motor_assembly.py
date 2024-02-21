@@ -81,8 +81,8 @@ motor_shaft_revolute.Initialize(motor, shaft, chrono.ChCoordsysD(chrono.ChVector
 
 
 actuator = chrono.ChLinkMotorRotationTorque()
-actuator.Initialize(shaft, motor, chrono.ChFrameD(chrono.ChVectorD(0, 0, 1), chrono.Q_from_AngAxis(chrono.CH_C_PI / 2, chrono.ChVectorD(0, 1, 0))), )
-actuator.SetTorqueFunction(chrono.ChFunction_Const(-100))
+actuator.Initialize(shaft, motor, chrono.ChFrameD(chrono.ChVectorD(0, 0, 1), chrono.Q_from_AngAxis(chrono.CH_C_PI / 2, chrono.ChVectorD(1, 0, 0))))
+actuator.SetTorqueFunction(chrono.ChFunction_Const(-1000))  # TODO: Figure out how to fix this
 
 system.AddBody(body)
 system.AddBody(motor)
