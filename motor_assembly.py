@@ -39,11 +39,11 @@ def load_step_body(file_name: str, part_name: str, mass=3, pos: chrono.ChVectorD
             root_frame = chrono.ChFrameMovingD(chrono.ChVectorD(0, 0, 0), tot_rotation)
             mbody.ConcatenatePreTransformation(root_frame)
 
+
             mbody.SetMass(mass)  # Setting the mass to 0 would mean no gravity
             print(f"Loaded {part_name}.")
-            if not pos:
-                pos = chrono.ChVectorD(0, 0, 0)
-            mbody.SetPos(pos)
+            if pos:
+                mbody.SetPos(pos)
 
             return mbody
 
@@ -63,17 +63,27 @@ coll_mat = chrono.ChMaterialSurfaceNSC()
 system.AddBody(setup_ground(3, 3))
 
 body = load_step_body('MotorAssembly.step', 'Assembly/Body')
-motor = load_step_body('MotorAssembly.step', 'Assembly/Motor', pos=chrono.ChVectorD(1, 0, 0))
-shaft = load_step_body('MotorAssembly.step', 'Assembly/Shaft', pos=chrono.ChVectorD(0, 0, 1))
+motor = load_step_body('MotorAssembly.step', 'Assembly/Motor')
+shaft = load_step_body('MotorAssembly.step', 'Assembly/Shaft')
 
-body_motor_fixed = chrono.ChLinkMateFix()
-# body_motor_fixed.Initialize(body, motor, chrono.ChCoordsysD(chrono.ChVectorD(0, 0, 0), chrono.Q_from_AngAxis(chrono.CH_C_PI / 2, chrono.ChVectorD(1, 0, 0))))
-# TODO: Figure out how to initialize this
+
+body_motor_fixed = chrono.ChLinkLockLock()
+body_motor_fixed.Initialize(body, motor, chrono.ChCoordsysD(chrono.ChVectorD(0, 0, 0), chrono.Q_from_AngAxis(chrono.CH_C_PI / 2, chrono.ChVectorD(1, 0, 0))))
+
+motor_shaft_revolute = chrono.ChLinkLockRevolute()
+motor_shaft_revolute.Initialize(motor, shaft, chrono.ChCoordsysD(chrono.ChVectorD(0, 0, 0), chrono.Q_from_AngAxis(chrono.CH_C_PI / 2, chrono.ChVectorD(1, 0, 0))))
+
+
+actuator = chrono.ChLinkMotorRotationTorque()
+actuator.Initialize(shaft, motor, chrono.ChFrameD(chrono.ChVectorD(0, 0, 1)))
+actuator.SetTorqueFunction(chrono.ChFunction_Const(1))
 
 system.AddBody(body)
 system.AddBody(motor)
 system.AddBody(shaft)
 system.Add(body_motor_fixed)
+system.Add(motor_shaft_revolute)
+system.Add(actuator)
 
 # Create the Irrlicht visualization
 vis = chronoirr.ChVisualSystemIrrlicht()
@@ -90,7 +100,7 @@ vis.AddTypicalLights()
 mode = chrono.ChCollisionSystem.VIS_Shapes
 
 #  Run the simulation
-i = 0
+last_tenth_sec_passed = 0
 while vis.Run():
     vis.BeginScene()
     vis.Render()
@@ -98,3 +108,7 @@ while vis.Run():
     system.DoStepDynamics(1e-3)
 
     system.GetCollisionSystem().Visualize(chrono.ChCollisionSystem.VIS_Shapes)
+
+    if system.GetChTime() - last_tenth_sec_passed > 0.1:
+        print(f"Time is {system.GetChTime():.1f}")
+        last_tenth_sec_passed = system.GetChTime()
