@@ -10,6 +10,7 @@ coll_mat = chrono.ChMaterialSurfaceNSC()
 # ground object
 ground = chrono.ChBodyEasyBox(1, 0.05, 1, 100, True, True, coll_mat)
 ground.SetPos(chrono.ChVectorD(0, -0.25, 0))
+ground.GetVisualShape(0).SetTexture(chrono.GetChronoDataFile("textures/concrete.jpg"))
 ground.SetBodyFixed(True)
 ground.SetMass(100)
 system.Add(ground)

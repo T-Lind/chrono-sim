@@ -66,7 +66,8 @@ chrono.ChCollisionModel_SetDefaultSuggestedEnvelope(0.1)
 system.SetCollisionSystem(chrono.ChCollisionSystemBullet())
 coll_mat = chrono.ChMaterialSurfaceNSC()
 
-system.AddBody(setup_ground(3, 3))
+ground = setup_ground(3, 3)
+system.AddBody(ground)
 
 # Note: list of default textures can be found here: https://github.com/projectchrono/chrono/tree/main/data/textures
 base = load_step_body('JustMotorTest.step', 'JustMotorTest/Base', mass=9,
@@ -74,19 +75,14 @@ base = load_step_body('JustMotorTest.step', 'JustMotorTest/Base', mass=9,
 shaft = load_step_body('JustMotorTest.step', 'JustMotorTest/Shaft', mass=0.3,
                        texture=chrono.GetChronoDataFile("textures/bluewhite.png"))
 
-# setup revolute
-
-# setup torque motor
-motor = chrono.ChLinkMotorRotationTorque()
-
 system.AddBody(base)
 system.AddBody(shaft)
 
 my_motor = chrono.ChLinkMotorRotationTorque()
-my_motor.Initialize(base, shaft, base.GetPos())
+my_motor.Initialize(base, ground, chrono.ChFrameD(chrono.ChVectorD(0, 0, 0)))
 my_motor.SetTorqueFunction(chrono.ChFunction_Const(10))
 
-system.AddBody(my_motor)
+system.Add(my_motor)
 
 # Create the Irrlicht visualization
 vis = chronoirr.ChVisualSystemIrrlicht()
@@ -113,5 +109,5 @@ while vis.Run():
     system.GetCollisionSystem().Visualize(chrono.ChCollisionSystem.VIS_Shapes)
 
     if system.GetChTime() - last_tenth_sec_passed > 0.1:
-        print(f"Time is {system.GetChTime():.1f}, Motor angle is {motor.GetMotorRot()} degrees.")
+        # print(f"Time is {system.GetChTime():.1f}, Motor angle is {motor.GetMotorRot()} degrees.")
         last_tenth_sec_passed = system.GetChTime()
