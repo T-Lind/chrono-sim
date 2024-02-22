@@ -1,6 +1,6 @@
 import pychrono as chrono
-import pychrono.cascade as cascade
 import pychrono.irrlicht as chronoirr
+import pychrono.cascade as cascade
 from OCC.Core.TopoDS import TopoDS_Shape
 
 

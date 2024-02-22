@@ -75,20 +75,18 @@ shaft = load_step_body('JustMotorTest.step', 'JustMotorTest/Shaft', mass=0.3,
                        texture=chrono.GetChronoDataFile("textures/bluewhite.png"))
 
 # setup revolute
-revolute = chrono.ChLinkLockRevolute()
-revolute.Initialize(shaft, base, chrono.ChCoordsysD(chrono.ChVectorD(0, 0, 0),
-                                                    chrono.Q_from_AngAxis(chrono.CH_C_PI_2, chrono.ChVectorD(0, 1, 0))))
 
 # setup torque motor
 motor = chrono.ChLinkMotorRotationTorque()
-motor.Initialize(shaft, base, chrono.ChFrameD(chrono.ChVectorD(0, 0, 0),  # TODO: Figure out how to get this working
-                                              chrono.Q_from_AngAxis(chrono.CH_C_PI_2, chrono.ChVectorD(-1, 0, 0))))
-motor.SetTorqueFunction(chrono.ChFunction_Const(-100))
 
 system.AddBody(base)
 system.AddBody(shaft)
-system.AddLink(revolute)
-system.Add(motor)
+
+my_motor = chrono.ChLinkMotorRotationTorque()
+my_motor.Initialize(base, shaft, base.GetPos())
+my_motor.SetTorqueFunction(chrono.ChFunction_Const(10))
+
+system.AddBody(my_motor)
 
 # Create the Irrlicht visualization
 vis = chronoirr.ChVisualSystemIrrlicht()
